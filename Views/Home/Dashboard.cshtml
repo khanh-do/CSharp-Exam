@@ -1,0 +1,72 @@
+@using BELTEXAM.Models
+@model List<MeetUp>
+
+<h1>Welcome to the Dojo Activity Center, @ViewBag.User.FirstName</h1>
+<a href="/logout"><button>Log Out</button></a>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Activity</th>
+            <th>Date and Time</th>
+            <th>Duration</th>
+            <th>Event Coordinator</th>
+            <th>No. of Participants</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var meetUp in @Model)        
+        {
+            @if(meetUp.Date>DateTime.Now)
+            {
+
+            
+            <tr>
+                <td><a asp-action="Details" asp-controller="Home"
+                asp-route-meetUpId="@meetUp.MeetUpId">@meetUp.Title</a></td>
+
+                <td>@meetUp.Date</td>
+                <td>@meetUp.Duration Hours</td>
+                <td>@meetUp.Creator.FirstName</td>
+                <td>@meetUp.Reservations.Count</td>
+                
+                @if( @ViewBag.User.UserId == @meetUp.UserId )
+                {
+                    <td><a asp-action="Destroy" asp-route-meetUpId="@meetUp.MeetUpId">Delete</a></td>
+                }
+                @if( meetUp.Reservations.All( r => r.UserId != ViewBag.User.UserId) || meetUp.Reservations.Count == 0)
+                {
+                    <td><a asp-action="RSVP" asp-route-meetUpId="@meetUp.MeetUpId" asp-route-status="add">Join</a></td>
+                }
+                @if( meetUp.Reservations.Any( r => r.UserId == ViewBag.User.UserId) )
+                {
+                    <td><a asp-action="RSVP" asp-route-meetUpId="@meetUp.MeetUpId" asp-route-status="remove">Leave</a></td>
+                }
+
+                
+            </tr>
+            }
+        }
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tbody>
+</table>
+
+
+<a href="/new"><button>Add New Activity</button></a>

@@ -1,0 +1,38 @@
+@using BELTEXAM.Models
+@model MeetUp
+
+<h1>Dojo Activity Center</h1>
+<h2>@Model.Title</h2>
+
+@if( @Model.Creator.UserId == ViewBag.UserId){
+    <a asp-action="Destroy" asp-route-meetUpId="@Model.MeetUpId"><button>Delete</button></a>
+}
+@if( @Model.Reservations.All( r => r.UserId != ViewBag.UserId) || @Model.Reservations.Count == 0)
+{
+    <a asp-action="RSVP" asp-route-meetUpId="@Model.MeetUpId" asp-route-status="add"><button>Join</button></a>
+}
+@if( @Model.Reservations.Any( r => r.UserId == ViewBag.UserId) )
+{
+    <a asp-action="RSVP" asp-route-meetUpId="@Model.MeetUpId" asp-route-status="remove"><button>Leave</button></a>
+}
+
+<h3>Event Coordinator: @Model.Creator.FirstName</h3>
+
+<p>Description: @Model.Description</p>
+
+
+
+<p>Participants</p>
+@if(@Model.Reservations.Count == 0)
+{
+    <p>No Participants at this time</p>
+}
+<ul>
+@foreach(var person in @Model.Reservations)
+{
+    <li>@person.User.FirstName @person.User.LastName</li>
+}
+</ul>
+
+
+<a href="/dashboard"><button>Dashboard</button></a><a href="/logout"><button>Log Out</button></a>
